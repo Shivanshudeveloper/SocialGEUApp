@@ -6,9 +6,9 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent-555">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="./home.php?page=home">Home
-                    <span class="sr-only">(current)</span>
+            <li class="nav-item">
+                <a class="nav-link" href="./home.php?page=home">
+                    Home
                 </a>
             </li>
             <li class="nav-item">
@@ -21,8 +21,11 @@
         <ul class="navbar-nav ml-auto nav-flex-icons">
             <li class="nav-item avatar">
                 <a class="nav-link p-0" href="#">
-                    <img src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" class="rounded-circle z-depth-0" alt="avatar image" height="35">
+                    <img src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" id="avtarProfilePic" class="rounded-circle z-depth-0" alt="avatar image" height="35">
                 </a>
+                <script>
+                    
+                </script>
             </li>
         </ul>
     </div>

@@ -33,7 +33,7 @@ include_once '../includes/navbar.inc.php';
         <a href="#">
             <li class="list-group-item">Edit Your Profile</li>
         </a>
-        <a href="#">
+        <a href="posts.php?page=posts">
             <li class="list-group-item">My Posts</li>
         </a>
         <a href="#">

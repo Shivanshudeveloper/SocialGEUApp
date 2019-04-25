@@ -12,7 +12,7 @@
 <button type="button" style="float: right;" id="post-btn" onclick="submitPost()" class="btn btn-sm marginCard btn-primary">Post</button>
 <br /><br />
 
-<div id="allPosts">
+<div id="allPosts"></div>
     <!-- Card -->
     <div class="card marginCard">
         <!-- Card image -->
@@ -61,7 +61,6 @@
     </div>
     <!-- Card -->
 
-</div>
 <br />
 <br />
 <br />

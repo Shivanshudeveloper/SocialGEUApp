@@ -5,6 +5,19 @@ $(document).ready(() => {
     var page = url.searchParams.get("page");
     // Checking URL
     (() => {
+        
+        // Profile Pic Update
+        firebase.auth().onAuthStateChanged(firebaseUser => {
+            // Checking if the session for the user exist or not
+            if (firebaseUser) {
+                $("#avtarProfilePic").attr("src", firebaseUser.photoURL)
+            } else {
+                $("#avtarProfilePic").attr("src", "https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg")
+            }
+        })
+
+
+
         if (page === "home") {
             $("#root").load("./components/home.php")
             getPost()
@@ -20,6 +33,8 @@ $(document).ready(() => {
             });
         } else if (page === "profile") {
             userProfile()
+        } else if (page === "posts") {
+            getPostUser()
         }
     })()
 
@@ -98,9 +113,10 @@ $(document).ready(() => {
 })
 
 const getPost = () => {
-    // Getting Posts
+    // Getting All Posts
+    var user = firebase.auth().currentUser
     var database = firebase.database()
-    var ref = database.ref('posts')
+    var ref = database.ref('posts/')
     ref.on('value', gotData, errData)
     function gotData(data) {
         var posts = data.val()
@@ -125,7 +141,7 @@ const getPost = () => {
                 </div>
             </div>
         `;
-            document.getElementById("allPosts").innerHTML += element;
+            document.getElementById("allPosts").innerHTML = element;
             console.log("Post Added")
         }
     }
@@ -133,6 +149,52 @@ const getPost = () => {
     function errData(error) {
         console.error(error);
     }
+}
+
+const getPostUser = () => {
+    // Getting User Posts
+    firebase.auth().onAuthStateChanged(user => {
+        // Checking if the session for the user exist or not
+        if (user) {
+            var database = firebase.database()
+            var ref = database.ref('UserPosts/' + user.uid + "/")
+            ref.on('value', gotData, errData)
+            function gotData(data) {
+                var posts = data.val()
+                var keys = Object.keys(posts)
+                for (let i = 0; i < keys.length; i++) {
+                    var k = keys[i]
+                    var post = posts[k].post
+                    var name = posts[k].name
+                    var photo = posts[k].photoUrl
+                    var element = `
+                    <div class="marginCard card">
+                    <div class="card-body d-flex flex-row">
+                        <img src="${photo}" class="rounded-circle mr-3" height="50px" width="50px" alt="avatar" />
+                        <div>
+                            <h4 class="card-title font-weight-bold mb-2">${name}</h4>
+                        </div>
+                    </div>
+                        <div class="card-body">
+                            ${post}
+                        </div>
+                    </div>
+                `;
+                    document.getElementById("allPosts").innerHTML += element;
+                    console.log("Post Added")
+                }
+            }
+
+            function errData(error) {
+                console.error(error);
+            }
+        } else {
+            console.log("No User Login")
+        }
+    })
+
+
+    
 }
 
 const userProfile = () => {
@@ -156,7 +218,8 @@ const submitPost = () => {
     var user = firebase.auth().currentUser
     var posts = $("#post-field").val()
     var database = firebase.database()
-    var ref = database.ref('posts')
+    var ref1 = database.ref('UserPosts/'+user.uid)
+    var ref2 = database.ref('posts/')
     var data = {
         post: posts,
         name: user.displayName,
@@ -173,7 +236,8 @@ const submitPost = () => {
     })
         .then((willDelete) => {
             if (willDelete) {
-                ref.push(data)
+                ref1.push(data)
+                ref2.push(data)
                 swal({
                     title: "Good job!",
                     text: "You is shared",
