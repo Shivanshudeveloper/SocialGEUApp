@@ -7,6 +7,7 @@ $(document).ready(() => {
     (() => {
         if (page === "home") {
             $("#root").load("./components/home.php")
+            getPost()
         } else if(page === "blogs") {
 
         } else if (page === "notifications") {
@@ -17,6 +18,8 @@ $(document).ready(() => {
             }).catch(function (error) {
                 console.error(error)
             });
+        } else if (page === "profile") {
+            userProfile()
         }
     })()
 
@@ -93,19 +96,21 @@ $(document).ready(() => {
 
     
 })
-// Getting Posts
-var database = firebase.database()
-var ref = database.ref('posts')
-ref.on('value', gotData, errData)
-function gotData(data) {
-    var posts = data.val()    
-    var keys = Object.keys(posts)
-    for (let i = 0; i < keys.length; i++) {
-        var k = keys[i]
-        var post = posts[k].post
-        var name = posts[k].name
-        var photo = posts[k].photoUrl
-        var element = `
+
+const getPost = () => {
+    // Getting Posts
+    var database = firebase.database()
+    var ref = database.ref('posts')
+    ref.on('value', gotData, errData)
+    function gotData(data) {
+        var posts = data.val()
+        var keys = Object.keys(posts)
+        for (let i = 0; i < keys.length; i++) {
+            var k = keys[i]
+            var post = posts[k].post
+            var name = posts[k].name
+            var photo = posts[k].photoUrl
+            var element = `
             <div class="marginCard card">
             
             <div class="card-body d-flex flex-row">
@@ -120,14 +125,32 @@ function gotData(data) {
                 </div>
             </div>
         `;
-        document.getElementById("allPosts").innerHTML += element;
-        console.log("Post Added")     
+            document.getElementById("allPosts").innerHTML += element;
+            console.log("Post Added")
+        }
+    }
+
+    function errData(error) {
+        console.error(error);
     }
 }
 
-function errData(error) {
-    console.error(error);
+const userProfile = () => {
+    firebase.auth().onAuthStateChanged(firebaseUser => {
+        // Checking if the session for the user exist or not
+        if (firebaseUser) {
+            $("#profilePhoto").attr("src", firebaseUser.photoURL)
+            $("#displayName").html(firebaseUser.displayName)
+            $("#userEmail").html(firebaseUser.email)
+        } else {
+            console.log("No User Login")
+        }
+    })
 }
+
+
+
+
 
 const submitPost = () => {
     var user = firebase.auth().currentUser
@@ -164,7 +187,4 @@ const submitPost = () => {
 
             }
         });
-
-
-    
 }
