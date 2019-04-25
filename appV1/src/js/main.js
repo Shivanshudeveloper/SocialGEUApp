@@ -35,6 +35,8 @@ $(document).ready(() => {
             userProfile()
         } else if (page === "posts") {
             getPostUser()
+        } else if (page === "research") {
+            $("#root").load("./components/research.php")
         }
     })()
 
@@ -141,7 +143,7 @@ const getPost = () => {
                 </div>
             </div>
         `;
-            document.getElementById("allPosts").innerHTML = element;
+            document.getElementById("allPosts").innerHTML += element;
             console.log("Post Added")
         }
     }
@@ -252,3 +254,6 @@ const submitPost = () => {
             }
         });
 }
+
+
+

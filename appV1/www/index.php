@@ -51,13 +51,7 @@ include_once '../includes/header.inc.php';
 
         const promise = firebase.auth().createUserWithEmailAndPassword(email, pwd);
         promise
-            .then(user => swal({
-                    title: "Great",
-                    text: "User Created",
-                    icon: "success",
-                    button: "Login",
-                }),
-                window.location.href = "./index.php?user=created"
+            .then(user => window.location.href = "./index.php?user=created"
             )
             .catch(e => swal({
                 title: "Opps!",
