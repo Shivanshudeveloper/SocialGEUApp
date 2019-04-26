@@ -1,5 +1,5 @@
 <!--Navbar -->
-<nav class="navbar sticky-top navbar-expand-lg navbar-dark indigo">
+<nav class="navbar sticky-top navbar-expand-lg navbar-dark red">
     <a class="navbar-brand" href="#">GEU</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-555" aria-controls="navbarSupportedContent-555" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -24,7 +24,7 @@
                     <img src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" id="avtarProfilePic" class="rounded-circle z-depth-0" alt="avatar image" height="35">
                 </a>
                 <script>
-                    
+
                 </script>
             </li>
         </ul>

@@ -15,14 +15,12 @@ $(document).ready(() => {
                 $("#avtarProfilePic").attr("src", "https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg")
             }
         })
-
-
-
         if (page === "home") {
             $("#root").load("./components/home.php")
             getPost()
+            getBlog()
         } else if(page === "blogs") {
-
+            $("#root").load("./components/blogs.php") 
         } else if (page === "notifications") {
 
         } else if (page === "signout") {
@@ -114,8 +112,39 @@ $(document).ready(() => {
     
 })
 
-const getPost = () => {
-    // Getting All Posts
+function getBlog() {
+    var database = firebase.database()
+    var ref = database.ref('blogs/')
+    ref.on('value', gotData, errData)
+    function gotData(data) {
+        var posts = data.val()
+        var keys = Object.keys(posts)
+        for (let i = 0; i < keys.length; i++) {
+            var k = keys[i]
+            var fileURL = posts[k].downloadURL
+            var fileTitle = posts[k].title
+            var blog = posts[k].blog
+            var imgDownloadUrl = posts[k].downloadURL
+            var element = `
+            <div class="marginCard card">
+                <img class="card-img-top" src=${imgDownloadUrl} alt="Card image cap">
+                <div class="card-body">
+                    <h4 class="card-title font-weight-bold mb-2">${fileTitle}</h4>
+                    <p class="card-text">${blog}</p>
+                </div>
+            </div>
+        `;
+            document.getElementById("allPosts").innerHTML += element;
+            console.log("Blog Added")
+        }
+    }
+
+    function errData(error) {
+        console.error(error);
+    }
+}
+
+function getPost() {
     var user = firebase.auth().currentUser
     var database = firebase.database()
     var ref = database.ref('posts/')
@@ -153,7 +182,7 @@ const getPost = () => {
     }
 }
 
-const getPostUser = () => {
+function getPostUser() {
     // Getting User Posts
     firebase.auth().onAuthStateChanged(user => {
         // Checking if the session for the user exist or not
@@ -194,12 +223,9 @@ const getPostUser = () => {
             console.log("No User Login")
         }
     })
-
-
-    
 }
 
-const userProfile = () => {
+function userProfile() {
     firebase.auth().onAuthStateChanged(firebaseUser => {
         // Checking if the session for the user exist or not
         if (firebaseUser) {
@@ -212,15 +238,11 @@ const userProfile = () => {
     })
 }
 
-
-
-
-
-const submitPost = () => {
+function submitPost() {
     var user = firebase.auth().currentUser
     var posts = $("#post-field").val()
     var database = firebase.database()
-    var ref1 = database.ref('UserPosts/'+user.uid)
+    var ref1 = database.ref('UserPosts/' + user.uid)
     var ref2 = database.ref('posts/')
     var data = {
         post: posts,
@@ -248,12 +270,9 @@ const submitPost = () => {
                 });
                 console.log("Post Submitted")
                 $("#post-field").val("")
-                location.reload(true)                
+                location.reload(true)
             } else {
 
             }
         });
 }
-
-
-

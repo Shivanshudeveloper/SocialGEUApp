@@ -13,7 +13,6 @@ include_once '../includes/navbar.inc.php';
 <br />
 
 <!-- Body Comes Here -->
-
 <?php
 include_once '../includes/footer.inc.php';
 ?>

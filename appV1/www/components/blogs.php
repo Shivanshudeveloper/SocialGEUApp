@@ -1,14 +1,15 @@
 <div class="card marginCard">
     <div class="text-center card-body">
-        <h3 class="card-title">Papers</h3>
+        <h3 class="card-title">Blogs & Article</h3>
     </div>
 </div>
 
-<h2 class="text-center" style="font-size: 20px">Upload File</h2>
 
 <div class="card marginCard">
     <div class="text-center card-body">
         <input type="text" id="title" placeholder="Title" class="form-control">
+        <textarea style="margin-top: 5px;" maxlength="100" class="form-control z-depth-1" id="blog-field" rows="3" placeholder="Something intresting is coming"></textarea>
+
         <!-- <input type="checkbox" id="public-chk">Public -->
         <input style="margin-top: 10px" type="file" id="fileButton" />
         <br />
@@ -29,7 +30,7 @@
             // Checking if the session for the user exist or not
             if (user) {
                 var database = firebase.database()
-                var ref = database.ref('articles/' + user.uid + "/")
+                var ref = database.ref('Userblogs/' + user.uid + "/")
                 ref.on('value', gotData, errData)
 
                 function gotData(data) {
@@ -39,16 +40,15 @@
                         var k = keys[i]
                         var fileURL = posts[k].downloadURL
                         var fileTitle = posts[k].title
+                        var blog = posts[k].blog
+                        var imgDownloadUrl = posts[k].downloadURL
                         console.log(fileURL)
                         var element = `
                             <div class="marginCard card">
-                            <div class="card-body d-flex flex-row">
-                                <div>
-                                    <h4 class="card-title font-weight-bold mb-2">${fileTitle}</h4>
-                                </div>
-                            </div>
+                            <img class="card-img-top" src=${imgDownloadUrl} alt="Card image cap">
                                 <div class="card-body">
-                                    <a href=${fileURL} target="_blank"  class="btn btn-primary btn-block">Download</a>
+                                    <h4 class="card-title font-weight-bold mb-2">${fileTitle}</h4>
+                                    <p class="card-text">${blog}</p>
                                 </div>
                             </div>
                         `;
@@ -65,7 +65,6 @@
             }
         })
     })()
-    
     var fileButton = document.getElementById('fileButton');
     var imageDownloadUrl = "";
     var uploader = document.getElementById('uploader');
@@ -75,7 +74,7 @@
         var file = e.target.files[0];
 
         // Create a storage ref
-        var storageRef = firebase.storage().ref('files/research/' + file.name);
+        var storageRef = firebase.storage().ref('files/blogs/' + file.name);
 
         // Display Message
         document.getElementById("uploadingStatus").innerHTML = "Uploading...";
@@ -118,6 +117,7 @@
         firebase.auth().onAuthStateChanged(firebaseUser => {
             if (firebaseUser) {
                 var title = $("#title").val()
+                var blog = $("#blog-field").val()
                 if (title == "") {
                     swal({
                         title: "Title",
@@ -126,17 +126,20 @@
                     });
                 } else {
                     var database = firebase.database()
-                    var ref_articles = database.ref("articles/" + firebaseUser.uid)
+                    var ref_UserBlogs = database.ref("Userblogs/" + firebaseUser.uid)
                     var ref_userPosts = database.ref('UserPosts/' + firebaseUser.uid)
+                    var ref_blogs = database.ref('blogs/')
                     var data = {
                         title: title,
+                        blog: blog,
                         downloadURL: imageDownloadUrl,
                         name: firebaseUser.displayName,
                         email: firebaseUser.email,
                         photoUrl: firebaseUser.photoURL
                     }
-                    ref_articles.push(data)
+                    ref_UserBlogs.push(data)
                     ref_userPosts.push(data)
+                    ref_blogs.push(data)
                     location.reload(true)
                 }
             } else {
