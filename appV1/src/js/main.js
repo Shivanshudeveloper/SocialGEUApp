@@ -35,6 +35,10 @@ $(document).ready(() => {
             getPostUser()
         } else if (page === "research") {
             $("#root").load("./components/research.php")
+        } else if (page === "donation") {
+            $("#root").load("./components/donation.php")
+        } else if (page === "donationForm") {
+            $("#root").load("./components/donationForm.php")
         }
     })()
 
@@ -273,6 +277,107 @@ function submitPost() {
                 location.reload(true)
             } else {
 
+            }
+        });
+}
+
+const createDonationCamp = () => {
+    var user = firebase.auth().currentUser
+    console.log(user)
+    // Prevention of default behavior of form
+    event.preventDefault()
+    var fullName = $("#donationFullName-txt").val()
+    var phoneNo = $("#donationPhoneNo-txt").val()
+    var email = $("#donationEmail-txt").val()
+    // DatabaseRefrence
+    var database = firebase.database()
+    var ref_donation = database.ref('Donation/')
+    var ref_user = database.ref('UserPosts/Donation/' + user.uid + "/")
+    // Getting the value from Donation Option
+    var donationOption = $("#donationOption").val()
+    if (donationOption === "Money") {
+        var paymentOption = $("#paymentOption").val()
+        // Checking for payment option
+        if (paymentOption === "Bank") {
+            var bankName = $("#bankName").val()
+            var ifscCode = $("#ifscCode").val()
+            var branch = $("#branch").val()
+            var data = {
+                FullName: fullName,
+                PhoneNo: phoneNo,
+                email: email,
+                DonationOption: "Money",
+                PaymentOption: paymentOption,
+                Details: bankName + "," + ifscCode + "," + branch
+            }
+            ref_donation.push(data)
+            ref_user.push(data)
+            console.log("Donation Camp Created")
+        } else if (paymentOption === "Paytm") {
+            var phoneNoWalletPaytm = $("#phoneNoWalletPaytm").val()
+            var data = {
+                FullName: fullName,
+                PhoneNo: phoneNo,
+                email: email,
+                DonationOption: "Money",
+                PaymentOption: paymentOption,
+                Details: phoneNoWalletPaytm
+            }
+            ref_donation.push(data)
+            ref_user.push(data)
+            console.log("Donation Camp Created")
+
+        } else if (paymentOption === "PhonePe") {
+            var phoneNoWalletPhonePe = $("#phoneNoWalletPhonepe").val()
+            var data = {
+                FullName: fullName,
+                PhoneNo: phoneNo,
+                email: email,
+                DonationOption: "Money",
+                PaymentOption: paymentOption,
+                Details: phoneNoWalletPhonePe
+            }
+            ref_donation.push(data)
+            ref_user.push(data)
+            console.log("Donation Camp Created")
+
+        } else if (paymentOption === "UPI BHIM") {
+            var upiID = $("#upiId").val()
+            var phoneNoWalletPhonePe = $("#phoneNoWalletPhonepe").val()
+            var data = {
+                FullName: fullName,
+                PhoneNo: phoneNo,
+                email: email,
+                DonationOption: "Money",
+                PaymentOption: paymentOption,
+                Details: upiID
+            }
+            ref_donation.push(data)
+            ref_user.push(data)
+            console.log("Donation Camp Created")
+        }
+    } else {
+        var data = {
+            FullName: fullName,
+            PhoneNo: phoneNo,
+            email: email,
+            DonationOption: donationOption,
+            PaymentOption: "None",
+            Details: "None"
+        }
+        ref_donation.push(data)
+        ref_user.push(data)
+        console.log("Donation Camp Created")
+    }
+    swal({
+        title: "Donation Camp Created",
+        text: "Your Donation Camp Is Created",
+        icon: "success",
+        button: true,
+    })
+        .then((willDelete) => {
+            if (willDelete) {
+                window.location.href = "donation.php?page=donation"
             }
         });
 }
