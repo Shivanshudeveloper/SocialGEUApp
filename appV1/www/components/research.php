@@ -8,16 +8,20 @@
 
 <div class="card marginCard">
     <div class="text-center card-body">
+
+
         <input type="text" id="title" placeholder="Title" class="form-control">
+        <!-- <input type="checkbox" id="public-chk">Public -->
 
         <input style="margin-top: 10px" type="file" id="fileButton" />
         <br />
         <br />
+        <label id="uploadingStatus"></label>
         <label>Progress</label>
         <br />
         <progress value="0" max="100" id="uploader">0%</progress>
         <br />
-        <button type="button" id="articleSubmit-btn" onclick="submitArticle();" disabled class="btn btn-block btn-primary">Upload</button>
+        <button type="button" disabled id="articleSubmit-btn" onclick="submitArticle();" class="btn btn-block btn-primary">Upload</button>
     </div>
 </div>
 
@@ -47,7 +51,7 @@
                                 </div>
                             </div>
                                 <div class="card-body">
-                                    <a href=${fileURL} target="_blank" class="btn btn-primary btn-block">Download</a>
+                                    <a href=${fileURL} target="_blank"  class="btn btn-primary btn-block">Download</a>
                                 </div>
                             </div>
                         `;
@@ -75,58 +79,77 @@
         // Create a storage ref
         var storageRef = firebase.storage().ref('files/' + file.name);
 
+        // Display Message
+        document.getElementById("uploadingStatus").innerHTML = "Uploading...";
+
         // Upload File
-        var task = storageRef.put(file);
+        var task = storageRef.put(file).then(function(snapshot) {
+            storageRef.getDownloadURL().then(function(url) {
+                imageDownloadUrl = url
+            }).catch(function(error) {
+                console.error(error)
+            });
+            console.log("File Uploaded")
+            $("#articleSubmit-btn").prop('disabled', false)
+            document.getElementById("uploadingStatus").innerHTML = "Finished"
+        })
 
-        // Get the download URL
-        storageRef.getDownloadURL().then(function(url) {
-            imageDownloadUrl = url
-        }).catch(function(error) {
-            console.error(error)
-        });
+
         // Update progress bar
-        task.on('state_changed',
+        // task.on('state_changed',
 
-            function progress(snapshot) {
-                var percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                uploader.value = percentage;
-            },
-            function error(err) {
-                console.error(err);
-            },
+        //     function progress(snapshot) {
+        //         var percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        //         uploader.value = percentage;
+        //         console.log(percentage)
+        //     },
+        //     function error(err) {
+        //         console.error(err);
+        //     },
 
-            function complete() {
-                console.log("Completed")
-                $("#articleSubmit-btn").prop('disabled', false)
-            }
+        //     function complete() {
+        //         // Get the download URL
+        //         storageRef.getDownloadURL().then(function(url) {
+        //             imageDownloadUrl = url
+        //         }).catch(function(error) {
+        //             console.error(error)
+        //         });
+        //         console.log("Completed")
+        //         $("#articleSubmit-btn").prop('disabled', false)
+        //     }
 
-        );
+        // );
     });
 
 
     const submitArticle = () => {
-        console.log(imageDownloadUrl)
-        firebase.auth().onAuthStateChanged(firebaseUser => {
-            if (firebaseUser) {
-                var title = $("#title").val()
-                if (title == "") {
-                    swal({
-                        title: "Title",
-                        text: "Title can't be blank",
-                        icon: "warning",
-                    });
-                } else {
-                    var database = firebase.database()
-                    var ref = database.ref("articles/" + firebaseUser.uid)
-                    var data = {
-                        title: title,
-                        downloadURL: imageDownloadUrl
+            firebase.auth().onAuthStateChanged(firebaseUser => {
+                if (firebaseUser) {
+                    var title = $("#title").val()
+                    if (title == "") {
+                        swal({
+                            title: "Title",
+                            text: "Title can't be blank",
+                            icon: "warning",
+                        });
+                    } else {
+                        var database = firebase.database()
+                        var ref_articles = database.ref("articles/" + firebaseUser.uid)
+                        var ref_userPosts = database.ref('UserPosts/' + firebaseUser.uid)
+                        var data = {
+                            title: title,
+                            downloadURL: imageDownloadUrl,
+                            name: firebaseUser.displayName,
+                            email: firebaseUser.email,
+                            photoUrl: firebaseUser.photoURL
+                        }
+                        ref_articles.push(data)
+                        ref_userPosts.push(data)
+                        location.reload(true)
                     }
-                    ref.push(data)
+                } else {
+                    console.log("No User Login")
                 }
-            } else {
-                console.log("No User Login")
-            }
-        })
-    }
+            })
+        }
 </script>
