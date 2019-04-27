@@ -99,21 +99,24 @@ $(document).ready(() => {
     $("#facebookSignIn-btn").click(() => {
         var provider = new firebase.auth.FacebookAuthProvider();
         firebase.auth().signInWithPopup(provider).then(function (result) {
-            window.location.href = "./home.php?page=home"
+            // This gives you a Facebook Access Token. You can use it to access the Facebook API.
             var token = result.credential.accessToken;
+            // The signed-in user info.
             var user = result.user;
             console.log(user)
         }).catch(function (error) {
+            // Handle Errors here.
             var errorCode = error.code;
             var errorMessage = error.message;
+            // The email of the user's account used.
             var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
             var credential = error.credential;
+            console.error(errorMessage);
+            
         });
+
     })
-
-    
-
-    
 })
 
 function getBlog() {
@@ -283,12 +286,15 @@ function submitPost() {
 
 const createDonationCamp = () => {
     var user = firebase.auth().currentUser
-    console.log(user)
+    console.log(user.uid)
     // Prevention of default behavior of form
     event.preventDefault()
     var fullName = $("#donationFullName-txt").val()
     var phoneNo = $("#donationPhoneNo-txt").val()
     var email = $("#donationEmail-txt").val()
+    var descriptionArea = $("#descriptionTxtarea").val()
+    console.log(descriptionArea)
+    var title = $("#title-txt").val()
     // DatabaseRefrence
     var database = firebase.database()
     var ref_donation = database.ref('Donation/')
@@ -308,6 +314,8 @@ const createDonationCamp = () => {
                 email: email,
                 DonationOption: "Money",
                 PaymentOption: paymentOption,
+                Description: descriptionArea,
+                Title: title,
                 Details: bankName + "," + ifscCode + "," + branch
             }
             ref_donation.push(data)
@@ -321,6 +329,8 @@ const createDonationCamp = () => {
                 email: email,
                 DonationOption: "Money",
                 PaymentOption: paymentOption,
+                Description: descriptionArea,
+                Title: title,
                 Details: phoneNoWalletPaytm
             }
             ref_donation.push(data)
@@ -335,6 +345,8 @@ const createDonationCamp = () => {
                 email: email,
                 DonationOption: "Money",
                 PaymentOption: paymentOption,
+                Description: descriptionArea,
+                Title: title,
                 Details: phoneNoWalletPhonePe
             }
             ref_donation.push(data)
@@ -350,6 +362,8 @@ const createDonationCamp = () => {
                 email: email,
                 DonationOption: "Money",
                 PaymentOption: paymentOption,
+                Description: descriptionArea,
+                Title: title,
                 Details: upiID
             }
             ref_donation.push(data)
@@ -363,6 +377,8 @@ const createDonationCamp = () => {
             email: email,
             DonationOption: donationOption,
             PaymentOption: "None",
+            Description: descriptionArea,
+            Title: title,
             Details: "None"
         }
         ref_donation.push(data)

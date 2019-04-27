@@ -8,6 +8,7 @@
     <form class="text-center p-3" method="GET">
         <p class="h4 mb-4">Form</p>
 
+        <input type="text" id="title-txt" class="form-control mb-2" placeholder="Titile For Donation">
         <input type="text" id="donationFullName-txt" class="form-control mb-2" placeholder="Full Name">
         <input type="email" id="donationPhoneNo-txt" class="form-control mb-2" placeholder="Email">
         <input type="text" id="donationEmail-txt" class="form-control mb-2" placeholder="Phone Number">
@@ -20,6 +21,8 @@
             <option value="Anything">Anything</option>
         </select>
         <div id="forMoney"></div>
+
+        <textarea class="form-control z-depth-1" rows="3" placeholder="Description for donation" id="descriptionTxtarea"></textarea>
 
         <button class="btn btn-success btn-block my-4" id="createDonation" onclick="createDonationCamp();" type="submit">Create</button>
         <small id="defaultRegisterFormPasswordHelpBlock" class="form-text text-muted mb-4">
